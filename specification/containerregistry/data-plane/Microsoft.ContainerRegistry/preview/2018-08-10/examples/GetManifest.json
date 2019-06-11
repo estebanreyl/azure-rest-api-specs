@@ -1,7 +1,8 @@
 {
   "parameters": {
     "name": "nanoserver",
-    "reference": "4.7.2-20180905-nanoserver-1803"
+    "reference": "4.7.2-20180905-nanoserver-1803",
+    "accept": "application/vnd.docker.distribution.manifest.v2+json"
   },
   "responses": {
     "200": {
