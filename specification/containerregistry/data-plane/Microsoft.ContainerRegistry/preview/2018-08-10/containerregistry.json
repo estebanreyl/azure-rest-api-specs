@@ -143,6 +143,13 @@
             "description": "A tag or a digest, pointing to a specific image",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "accept",
+            "in": "header",
+            "description": "Accept header string delimited by comma",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -790,11 +797,11 @@
           "description": "Image last update time"
         },
         "manifestCount": {
-          "type": "number",
+          "type": "integer",
           "description": "Number of the manifests"
         },
         "tagCount": {
-          "type": "number",
+          "type": "integer",
           "description": "Number of the tags"
         },
         "changeableAttributes": {
@@ -1009,8 +1016,10 @@
             },
             "os": "os",
             "digest": "digest",
+            "imageSize": 2401606,
             "createdTime": "createdTime",
             "mediaType": "mediaType",
+            "configMediaType": "configMediaType",
             "lastUpdateTime": "lastUpdateTime",
             "architecture": "architecture",
             "tags": [
@@ -1029,8 +1038,10 @@
             },
             "os": "os",
             "digest": "digest",
+            "imageSize": 2401606,
             "createdTime": "createdTime",
             "mediaType": "mediaType",
+            "configMediaType": "configMediaType",
             "lastUpdateTime": "lastUpdateTime",
             "architecture": "architecture",
             "tags": [
@@ -1062,11 +1073,13 @@
         "imageName": "nanoserver",
         "manifest": {
           "digest": "sha256:110d2b6c84592561338aa040b1b14b7ab81c2f9edbd564c2285dd7d70d777086",
+          "imageSize": 2401606,
           "createdTime": "2018-09-06T06:17:20.9983915Z",
           "lastUpdateTime": "2018-09-06T06:17:20.9983915Z",
           "architecture": "amd64",
           "os": "windows",
           "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+          "configMediaType": "application/vnd.docker.container.image.v1+json",
           "tags": [
             "4.7.2-20180905-nanoserver-1803"
           ],
@@ -1087,6 +1100,10 @@
           "type": "string",
           "description": "Manifest digest"
         },
+        "imageSize": {
+          "type": "integer",
+          "description": "Image size"
+        },
         "createdTime": {
           "type": "string",
           "description": "Created time"
@@ -1106,6 +1123,10 @@
         "mediaType": {
           "type": "string",
           "description": "Media type"
+        },
+        "configMediaType": {
+          "type": "string",
+          "description": "Config blob media type"
         },
         "tags": {
           "type": "array",
@@ -1129,8 +1150,10 @@
         },
         "os": "os",
         "digest": "digest",
+        "imageSize": 2401606,
         "createdTime": "createdTime",
         "mediaType": "mediaType",
+        "configMediaType": "configMediaType",
         "lastUpdateTime": "lastUpdateTime",
         "architecture": "architecture",
         "tags": [
@@ -1179,7 +1202,7 @@
       "description": "Returns the requested manifest file",
       "properties": {
         "schemaVersion": {
-          "type": "number",
+          "type": "integer",
           "description": "Schema version"
         },
         "architecture": {
