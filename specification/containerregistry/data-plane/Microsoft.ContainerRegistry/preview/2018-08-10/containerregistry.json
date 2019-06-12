@@ -169,6 +169,52 @@
             }
           }
         }
+      }, 
+      "put": {
+        "tags": [
+          "Manifest"
+        ],
+        "description": "Put the image manifest file associated with the specified name and reference. Reference may be a tag or a digest",
+        "x-ms-examples": {
+          "Put manifest": {
+            "$ref": "./examples/PutManifest.json"
+          }
+        },
+        "operationId": "PutManifest",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Name of the image (including the namespace)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "reference",
+            "in": "path",
+            "description": "A tag or a digest, pointing to a specific image",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "accept",
+            "in": "header",
+            "description": "Accept header string delimited by comma",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The manifest is updated"
+          },
+          "default": {
+            "description": "ACR error response describing why the operation failed.",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          }
+        }
       }
     },
     "/v2/_catalog": {
@@ -461,10 +507,10 @@
           "AcrTag",
           "AcrMetadata"
         ],
-        "description": "Get manifest attributes by tag",
+        "description": "Get tag attributes by tag",
         "operationId": "GetAcrTagAttributes",
         "x-ms-examples": {
-          "Get manifest attributes": {
+          "Get tag attributes": {
             "$ref": "./examples/GetAcrTagAttributes.json"
           }
         },
