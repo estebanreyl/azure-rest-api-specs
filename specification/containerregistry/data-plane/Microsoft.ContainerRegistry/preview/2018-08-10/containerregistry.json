@@ -1205,6 +1205,21 @@
           "type": "integer",
           "description": "Schema version"
         },
+        "mediaType": {
+          "type": "integer",
+          "description": "Media type usually application/vnd.docker.distribution.manifest.v2+json if this is in the accept header"
+        },
+        "config": {
+          "description": "V2 image config descriptor",
+          "$ref": "#/definitions/V2Descriptor"
+        },
+        "layers": {
+          "type": "array",
+          "description": "List of V2 image layer information",
+          "items": {
+            "$ref": "#/definitions/V2Descriptor"
+          }
+        },
         "architecture": {
           "type": "string",
           "description": "CPU architecture"
@@ -1221,7 +1236,7 @@
           "type": "array",
           "description": "List of layer information",
           "items": {
-            "$ref": "#/definitions/ImageLayer"
+            "$ref": "#/definitions/FsLayer"
           }
         },
         "history": {
@@ -1229,7 +1244,7 @@
           "description": "Image history",
           "x-ms-client-name": "ImageHistories",
           "items": {
-            "$ref": "#/definitions/ImageHistory"
+            "$ref": "#/definitions/History"
           }
         },
         "signatures": {
@@ -1241,32 +1256,19 @@
         }
       },
       "example": {
-        "name": "name",
-        "tag": "tag",
-        "fsLayers": [
-          {
-            "blobSum": "sha256:1f7d468f830cb0ed4beb8edc9438f18096e8c682e56a35242f60e6c61b718b30"
-          },
-          {
-            "blobSum": "sha256:2f7d468f830cb0ed4beb8edc9438f18096e8c682e56a35242f60e6c61b718b31"
-          }
-        ],
-        "history": "history",
-        "signatures": [
-          {
-            "header": {
-              "jwk": {
-                "crv": "P-256",
-                "kid": "WGXM:EYWQ:DA53:LQUP:BCWG:5RDG:S3ZM:ETH7:VMQS:WWKZ:EWDG:V74Q",
-                "kty": "EC",
-                "x": "OxZ9k5BVjPZ7jb3BmBD4X0d8MVPJqfF4NeSe8reoqnY",
-                "y": "EaCqTe4-vYwhk7qU6Bs2-AeLGOVtCe_-IY2MdE0Vfyc"
-              },
-              "alg": "ES256"
-            },
-            "signature": "p73LfotMGD8nNXz2g9YX2XtSllb4GI5-b3vjqP5N0nkv8QXg-r5z_omGiVbOZE2BYG1X_4TIN23l1KSEqsXxOg",
-            "protected": "eyJmb3JtYXRMZW5ndGgiOjI5ODYsImZvcm1hdFRhaWwiOiJDbjAiLCJ0aW1lIjoiMjAxOC0wOS0yMFQyMzo0MTo1MloifQ"
-          }
+        "schemaVersion": 2,
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+        "config": {
+            "mediaType": "application/vnd.docker.container.image.v1+json",
+            "size": 1512,
+            "digest": "sha256:6d1ef012b5674ad8a127ecfa9b5e6f5178d171b90ee462846974177fd9bdd39f"
+        },
+        "layers": [
+            {
+                "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+                "size": 2107098,
+                "digest": "sha256:5d20c808ce198565ff70b3ed23a991dd49afac45dece63474b27ce6ed036adc6"
+            }
         ]
       }
     },
@@ -1339,7 +1341,7 @@
         }
       }
     },
-    "ImageHistory": {
+    "History": {
       "description": "A list of unstructured historical data for v1 compatibility",
       "properties": {
         "v1Compatibility": {
@@ -1406,7 +1408,7 @@
         }
       }
     },
-    "ImageLayer": {
+    "FsLayer": {
       "description": "Image layer information",
       "properties": {
         "blobSum": {
@@ -1416,6 +1418,28 @@
       },
       "example": {
         "blobSum": "sha256:1f7d468f830cb0ed4beb8edc9438f18096e8c682e56a35242f60e6c61b718b30"
+      }
+    },
+    "V2Descriptor": {
+      "description": "Docker V2 image layer descriptor including config and layers",
+      "properties": {
+        "mediaType": {
+          "type": "string",
+          "description": "Layer media type"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Layer size"
+        },
+        "digest": {
+          "type": "string",
+          "description": "Layer digest"
+        }
+      },
+      "example": {
+          "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+          "size": 2107098,
+          "digest": "sha256:5d20c808ce198565ff70b3ed23a991dd49afac45dece63474b27ce6ed036adc6"
       }
     },
     "ChangeableAttributes": {
