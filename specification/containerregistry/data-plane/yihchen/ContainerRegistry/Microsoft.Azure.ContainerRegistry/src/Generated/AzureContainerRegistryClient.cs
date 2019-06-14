@@ -24,14 +24,14 @@ namespace Microsoft.Azure.ContainerRegistry
     using System.Threading.Tasks;
 
     /// <summary>
-    /// V2 API definition for the Azure Container Registry runtime
+    /// Metadata API definition for the Azure Container Registry runtime
     /// </summary>
     public partial class AzureContainerRegistryClient : ServiceClient<AzureContainerRegistryClient>, IAzureContainerRegistryClient, IAzureClient
     {
         /// <summary>
         /// The base URI of the service.
         /// </summary>
-        public System.Uri BaseUri { get; set; }
+        internal string BaseUri {get; set;}
 
         /// <summary>
         /// Gets or sets json serialization settings.
@@ -47,6 +47,11 @@ namespace Microsoft.Azure.ContainerRegistry
         /// Credentials needed for the client to connect to Azure.
         /// </summary>
         public ServiceClientCredentials Credentials { get; private set; }
+
+        /// <summary>
+        /// Registry login URL
+        /// </summary>
+        public string LoginUri { get; set; }
 
         /// <summary>
         /// Gets or sets the preferred language for the response.
@@ -88,51 +93,6 @@ namespace Microsoft.Azure.ContainerRegistry
         protected AzureContainerRegistryClient(HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : base(rootHandler, handlers)
         {
             Initialize();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the AzureContainerRegistryClient class.
-        /// </summary>
-        /// <param name='baseUri'>
-        /// Optional. The base URI of the service.
-        /// </param>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown when a required parameter is null
-        /// </exception>
-        protected AzureContainerRegistryClient(System.Uri baseUri, params DelegatingHandler[] handlers) : this(handlers)
-        {
-            if (baseUri == null)
-            {
-                throw new System.ArgumentNullException("baseUri");
-            }
-            BaseUri = baseUri;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the AzureContainerRegistryClient class.
-        /// </summary>
-        /// <param name='baseUri'>
-        /// Optional. The base URI of the service.
-        /// </param>
-        /// <param name='rootHandler'>
-        /// Optional. The http client handler used to handle http transport.
-        /// </param>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown when a required parameter is null
-        /// </exception>
-        protected AzureContainerRegistryClient(System.Uri baseUri, HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : this(rootHandler, handlers)
-        {
-            if (baseUri == null)
-            {
-                throw new System.ArgumentNullException("baseUri");
-            }
-            BaseUri = baseUri;
         }
 
         /// <summary>
@@ -189,75 +149,6 @@ namespace Microsoft.Azure.ContainerRegistry
         }
 
         /// <summary>
-        /// Initializes a new instance of the AzureContainerRegistryClient class.
-        /// </summary>
-        /// <param name='baseUri'>
-        /// Optional. The base URI of the service.
-        /// </param>
-        /// <param name='credentials'>
-        /// Required. Credentials needed for the client to connect to Azure.
-        /// </param>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown when a required parameter is null
-        /// </exception>
-        public AzureContainerRegistryClient(System.Uri baseUri, ServiceClientCredentials credentials, params DelegatingHandler[] handlers) : this(handlers)
-        {
-            if (baseUri == null)
-            {
-                throw new System.ArgumentNullException("baseUri");
-            }
-            if (credentials == null)
-            {
-                throw new System.ArgumentNullException("credentials");
-            }
-            BaseUri = baseUri;
-            Credentials = credentials;
-            if (Credentials != null)
-            {
-                Credentials.InitializeServiceClient(this);
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the AzureContainerRegistryClient class.
-        /// </summary>
-        /// <param name='baseUri'>
-        /// Optional. The base URI of the service.
-        /// </param>
-        /// <param name='credentials'>
-        /// Required. Credentials needed for the client to connect to Azure.
-        /// </param>
-        /// <param name='rootHandler'>
-        /// Optional. The http client handler used to handle http transport.
-        /// </param>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown when a required parameter is null
-        /// </exception>
-        public AzureContainerRegistryClient(System.Uri baseUri, ServiceClientCredentials credentials, HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : this(rootHandler, handlers)
-        {
-            if (baseUri == null)
-            {
-                throw new System.ArgumentNullException("baseUri");
-            }
-            if (credentials == null)
-            {
-                throw new System.ArgumentNullException("credentials");
-            }
-            BaseUri = baseUri;
-            Credentials = credentials;
-            if (Credentials != null)
-            {
-                Credentials.InitializeServiceClient(this);
-            }
-        }
-
-        /// <summary>
         /// An optional partial-method to perform custom initialization.
         /// </summary>
         partial void CustomInitialize();
@@ -266,7 +157,7 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </summary>
         private void Initialize()
         {
-            BaseUri = new System.Uri("https://acrapi.azurecr-test.io");
+            BaseUri = "{url}";
             AcceptLanguage = "en-US";
             LongRunningOperationRetryTimeout = 30;
             GenerateClientRequestId = true;
@@ -311,11 +202,21 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <exception cref="AcrErrorsException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when a required parameter is null
+        /// </exception>
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
         public async Task<AzureOperationResponse> GetDockerRegistryV2SupportWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
             string _invocationId = null;
@@ -327,8 +228,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetDockerRegistryV2Support", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "v2/").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "v2/";
+            _url = _url.Replace("{url}", LoginUri);
             List<string> _queryParameters = new List<string>();
             if (_queryParameters.Count > 0)
             {
@@ -461,6 +363,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<RepositoryTags>> GetTagListWithHttpMessagesAsync(string name, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -477,8 +383,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetTagList", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "v2/{name}/tags/list").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "v2/{name}/tags/list";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             List<string> _queryParameters = new List<string>();
             if (_queryParameters.Count > 0)
@@ -637,6 +544,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<Manifest>> GetManifestWithHttpMessagesAsync(string name, string reference, string accept = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -659,8 +570,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetManifest", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "v2/{name}/manifests/{reference}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "v2/{name}/manifests/{reference}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             _url = _url.Replace("{reference}", System.Uri.EscapeDataString(reference));
             List<string> _queryParameters = new List<string>();
@@ -825,6 +737,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string accept = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -847,8 +763,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "PutManifest", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "v2/{name}/manifests/{reference}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "v2/{name}/manifests/{reference}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             _url = _url.Replace("{reference}", System.Uri.EscapeDataString(reference));
             List<string> _queryParameters = new List<string>();
@@ -983,11 +900,21 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <exception cref="SerializationException">
         /// Thrown when unable to deserialize the response
         /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when a required parameter is null
+        /// </exception>
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
         public async Task<AzureOperationResponse<Repositories>> GetRepositoriesWithHttpMessagesAsync(string last = default(string), string n = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
             string _invocationId = null;
@@ -1001,8 +928,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetRepositories", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "v2/_catalog").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "v2/_catalog";
+            _url = _url.Replace("{url}", LoginUri);
             List<string> _queryParameters = new List<string>();
             if (last != null)
             {
@@ -1153,11 +1081,21 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <exception cref="SerializationException">
         /// Thrown when unable to deserialize the response
         /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when a required parameter is null
+        /// </exception>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when a required parameter is null
+        /// </exception>
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
         public async Task<AzureOperationResponse<Repositories>> GetAcrRepositoriesWithHttpMessagesAsync(string last = default(string), string n = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             // Tracing
             bool _shouldTrace = ServiceClientTracing.IsEnabled;
             string _invocationId = null;
@@ -1171,8 +1109,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetAcrRepositories", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/_catalog").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/_catalog";
+            _url = _url.Replace("{url}", LoginUri);
             List<string> _queryParameters = new List<string>();
             if (last != null)
             {
@@ -1331,6 +1270,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<RepositoryAttributes>> GetAcrRepositoryAttributesWithHttpMessagesAsync(string name, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -1347,8 +1290,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetAcrRepositoryAttributes", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             List<string> _queryParameters = new List<string>();
             if (_queryParameters.Count > 0)
@@ -1500,6 +1444,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<DeletedRepository>> DeleteAcrRepositoryWithHttpMessagesAsync(string name, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -1516,8 +1464,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "DeleteAcrRepository", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             List<string> _queryParameters = new List<string>();
             if (_queryParameters.Count > 0)
@@ -1669,6 +1618,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse> UpdateAcrRepositoryAttributesWithHttpMessagesAsync(string name, ChangeableAttributes value = default(ChangeableAttributes), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -1686,8 +1639,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "UpdateAcrRepositoryAttributes", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             List<string> _queryParameters = new List<string>();
             if (_queryParameters.Count > 0)
@@ -1839,6 +1793,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<AcrRepositoryTags>> GetAcrTagsWithHttpMessagesAsync(string name, string last = default(string), string n = default(string), string orderby = default(string), string digest = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -1859,8 +1817,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetAcrTags", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}/_tags").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}/_tags";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             List<string> _queryParameters = new List<string>();
             if (last != null)
@@ -2031,6 +1990,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<AcrTagAttributes>> GetAcrTagAttributesWithHttpMessagesAsync(string name, string reference, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -2052,8 +2015,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetAcrTagAttributes", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}/_tags/{reference}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}/_tags/{reference}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             _url = _url.Replace("{reference}", System.Uri.EscapeDataString(reference));
             List<string> _queryParameters = new List<string>();
@@ -2209,6 +2173,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse> UpdateAcrTagAttributesWithHttpMessagesAsync(string name, string reference, ChangeableAttributes value = default(ChangeableAttributes), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -2231,8 +2199,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "UpdateAcrTagAttributes", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}/_tags/{reference}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}/_tags/{reference}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             _url = _url.Replace("{reference}", System.Uri.EscapeDataString(reference));
             List<string> _queryParameters = new List<string>();
@@ -2373,6 +2342,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse> DeleteAcrTagWithHttpMessagesAsync(string name, string reference, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -2394,8 +2367,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "DeleteAcrTag", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}/_tags/{reference}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}/_tags/{reference}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             _url = _url.Replace("{reference}", System.Uri.EscapeDataString(reference));
             List<string> _queryParameters = new List<string>();
@@ -2539,6 +2513,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<AcrManifests>> GetAcrManifestsWithHttpMessagesAsync(string name, string last = default(string), string n = default(string), string orderby = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -2558,8 +2536,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetAcrManifests", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}/_manifests").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}/_manifests";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             List<string> _queryParameters = new List<string>();
             if (last != null)
@@ -2726,6 +2705,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse<AcrManifestAttributes>> GetAcrManifestAttributesWithHttpMessagesAsync(string name, string reference, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -2747,8 +2730,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "GetAcrManifestAttributes", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}/_manifests/{reference}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}/_manifests/{reference}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             _url = _url.Replace("{reference}", System.Uri.EscapeDataString(reference));
             List<string> _queryParameters = new List<string>();
@@ -2904,6 +2888,10 @@ namespace Microsoft.Azure.ContainerRegistry
         /// </return>
         public async Task<AzureOperationResponse> UpdateAcrManifestAttributesWithHttpMessagesAsync(string name, string reference, ChangeableAttributes value = default(ChangeableAttributes), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (LoginUri == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.LoginUri");
+            }
             if (name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "name");
@@ -2926,8 +2914,9 @@ namespace Microsoft.Azure.ContainerRegistry
                 ServiceClientTracing.Enter(_invocationId, this, "UpdateAcrManifestAttributes", tracingParameters);
             }
             // Construct URL
-            var _baseUrl = BaseUri.AbsoluteUri;
-            var _url = new System.Uri(new System.Uri(_baseUrl + (_baseUrl.EndsWith("/") ? "" : "/")), "acr/v1/{name}/_manifests/{reference}").ToString();
+            var _baseUrl = BaseUri;
+            var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "acr/v1/{name}/_manifests/{reference}";
+            _url = _url.Replace("{url}", LoginUri);
             _url = _url.Replace("{name}", System.Uri.EscapeDataString(name));
             _url = _url.Replace("{reference}", System.Uri.EscapeDataString(reference));
             List<string> _queryParameters = new List<string>();

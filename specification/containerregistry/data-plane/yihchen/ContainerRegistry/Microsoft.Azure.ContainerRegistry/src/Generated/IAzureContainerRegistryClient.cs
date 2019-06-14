@@ -20,14 +20,13 @@ namespace Microsoft.Azure.ContainerRegistry
     using System.Threading.Tasks;
 
     /// <summary>
-    /// V2 API definition for the Azure Container Registry runtime
+    /// Metadata API definition for the Azure Container Registry runtime
     /// </summary>
     public partial interface IAzureContainerRegistryClient : System.IDisposable
     {
         /// <summary>
         /// The base URI of the service.
         /// </summary>
-        System.Uri BaseUri { get; set; }
 
         /// <summary>
         /// Gets or sets json serialization settings.
@@ -43,6 +42,11 @@ namespace Microsoft.Azure.ContainerRegistry
         /// Credentials needed for the client to connect to Azure.
         /// </summary>
         ServiceClientCredentials Credentials { get; }
+
+        /// <summary>
+        /// Registry login URL
+        /// </summary>
+        string LoginUri { get; set; }
 
         /// <summary>
         /// Gets or sets the preferred language for the response.
