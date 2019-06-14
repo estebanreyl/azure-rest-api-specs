@@ -20,6 +20,11 @@
       "type": "basic"
     }
   },
+  "security": [
+    {
+      "registry_auth": []
+    }
+  ],
   "tags": [
     {
       "name": "v2",
@@ -56,11 +61,6 @@
   ],
   "schemes": [
     "https"
-  ],
-  "security": [
-    {
-      "registry_auth": []
-    }
   ],
   "produces": [
     "application/json"
@@ -1048,6 +1048,7 @@
           "description": "Image name"
         },
         "manifests": {
+          "x-ms-client-name": "ManifestsAttributes",
           "type": "array",
           "description": "List of manifests",
           "items": {
@@ -1119,6 +1120,7 @@
           "type": "string"
         },
         "manifest": {
+          "x-ms-client-name": "ManifestAttributes",
           "description": "Manifest attributes",
           "$ref": "#/definitions/AcrManifestAttributesBase"
         }
@@ -1297,7 +1299,6 @@
         "history": {
           "type": "array",
           "description": "Image history",
-          "x-ms-client-name": "ImageHistories",
           "items": {
             "$ref": "#/definitions/History"
           }
@@ -1340,7 +1341,6 @@
         },
         "protected": {
           "type": "string",
-          "x-ms-client-name": "protectedHeader",
           "description": "The signed protected header"
         }
       },
