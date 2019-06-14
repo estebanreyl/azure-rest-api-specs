@@ -1,11 +1,25 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "V2 API definition for the Azure Container Registry runtime",
+    "description": "Metadata API definition for the Azure Container Registry runtime",
     "version": "2018-08-10-preview",
     "title": "Azure Container Registry"
   },
-  "host": "acrapi.azurecr-test.io",
+  "x-ms-parameterized-host": {
+    "hostTemplate": "{url}",
+    "useSchemePrefix": false,
+    "positionInOperation": "first",
+    "parameters": [
+      {
+        "$ref": "#/parameters/url"
+      }
+    ]
+  },
+  "securityDefinitions": {
+    "registry_auth": {
+      "type": "basic"
+    }
+  },
   "tags": [
     {
       "name": "v2",
@@ -816,11 +830,6 @@
       }
     }
   },
-  "securityDefinitions": {
-    "registry_auth": {
-      "type": "basic"
-    }
-  },
   "definitions": {
     "RepositoryAttributes": {
       "type": "object",
@@ -1619,6 +1628,16 @@
     }
   },
   "parameters": {
+    "url": {
+      "name": "url",
+      "x-ms-client-name": "loginUri",
+      "description": "Registry login URL",
+      "required": true,
+      "type": "string",
+      "format": "url",
+      "in": "path",
+      "x-ms-skip-url-encoding": true
+    },
     "name": {
       "name": "name",
       "in": "path",
