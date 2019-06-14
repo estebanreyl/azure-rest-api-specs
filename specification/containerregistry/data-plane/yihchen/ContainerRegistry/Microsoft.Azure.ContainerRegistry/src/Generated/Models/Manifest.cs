@@ -41,9 +41,9 @@ namespace Microsoft.Azure.ContainerRegistry.Models
         /// <param name="name">Image name</param>
         /// <param name="tag">Image tag</param>
         /// <param name="fsLayers">List of layer information</param>
-        /// <param name="imageHistories">Image history</param>
+        /// <param name="history">Image history</param>
         /// <param name="signatures">Image signature</param>
-        public Manifest(int? schemaVersion = default(int?), int? mediaType = default(int?), V2Descriptor config = default(V2Descriptor), IList<V2Descriptor> layers = default(IList<V2Descriptor>), string architecture = default(string), string name = default(string), string tag = default(string), IList<FsLayer> fsLayers = default(IList<FsLayer>), IList<History> imageHistories = default(IList<History>), IList<ImageSignature> signatures = default(IList<ImageSignature>))
+        public Manifest(int? schemaVersion = default(int?), int? mediaType = default(int?), V2Descriptor config = default(V2Descriptor), IList<V2Descriptor> layers = default(IList<V2Descriptor>), string architecture = default(string), string name = default(string), string tag = default(string), IList<FsLayer> fsLayers = default(IList<FsLayer>), IList<History> history = default(IList<History>), IList<ImageSignature> signatures = default(IList<ImageSignature>))
         {
             SchemaVersion = schemaVersion;
             MediaType = mediaType;
@@ -53,7 +53,7 @@ namespace Microsoft.Azure.ContainerRegistry.Models
             Name = name;
             Tag = tag;
             FsLayers = fsLayers;
-            ImageHistories = imageHistories;
+            History = history;
             Signatures = signatures;
             CustomInit();
         }
@@ -117,7 +117,7 @@ namespace Microsoft.Azure.ContainerRegistry.Models
         /// Gets or sets image history
         /// </summary>
         [JsonProperty(PropertyName = "history")]
-        public IList<History> ImageHistories { get; set; }
+        public IList<History> History { get; set; }
 
         /// <summary>
         /// Gets or sets image signature
