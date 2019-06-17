@@ -103,7 +103,8 @@ namespace Microsoft.Azure.ContainerRegistry
         /// A tag or a digest, pointing to a specific image
         /// </param>
         /// <param name='accept'>
-        /// Accept header string delimited by comma
+        /// Accept header string delimited by comma. For example,
+        /// application/vnd.docker.distribution.manifest.v2+json
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -123,8 +124,9 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <param name='reference'>
         /// A tag or a digest, pointing to a specific image
         /// </param>
-        /// <param name='accept'>
-        /// Accept header string delimited by comma
+        /// <param name='contentType'>
+        /// Content type of the request body. For example,
+        /// application/vnd.docker.distribution.manifest.v2+json
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -132,7 +134,7 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string accept = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string contentType = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// List repositories

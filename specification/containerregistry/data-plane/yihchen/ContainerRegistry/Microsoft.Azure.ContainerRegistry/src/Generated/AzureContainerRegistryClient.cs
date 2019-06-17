@@ -519,7 +519,8 @@ namespace Microsoft.Azure.ContainerRegistry
         /// A tag or a digest, pointing to a specific image
         /// </param>
         /// <param name='accept'>
-        /// Accept header string delimited by comma
+        /// Accept header string delimited by comma. For example,
+        /// application/vnd.docker.distribution.manifest.v2+json
         /// </param>
         /// <param name='customHeaders'>
         /// Headers that will be added to request.
@@ -714,8 +715,9 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <param name='reference'>
         /// A tag or a digest, pointing to a specific image
         /// </param>
-        /// <param name='accept'>
-        /// Accept header string delimited by comma
+        /// <param name='contentType'>
+        /// Content type of the request body. For example,
+        /// application/vnd.docker.distribution.manifest.v2+json
         /// </param>
         /// <param name='customHeaders'>
         /// Headers that will be added to request.
@@ -735,7 +737,7 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string accept = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string contentType = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (LoginUri == null)
             {
@@ -758,7 +760,7 @@ namespace Microsoft.Azure.ContainerRegistry
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
                 tracingParameters.Add("name", name);
                 tracingParameters.Add("reference", reference);
-                tracingParameters.Add("accept", accept);
+                tracingParameters.Add("contentType", contentType);
                 tracingParameters.Add("cancellationToken", cancellationToken);
                 ServiceClientTracing.Enter(_invocationId, this, "PutManifest", tracingParameters);
             }
@@ -783,13 +785,13 @@ namespace Microsoft.Azure.ContainerRegistry
             {
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
             }
-            if (accept != null)
+            if (contentType != null)
             {
-                if (_httpRequest.Headers.Contains("accept"))
+                if (_httpRequest.Headers.Contains("content-type"))
                 {
-                    _httpRequest.Headers.Remove("accept");
+                    _httpRequest.Headers.Remove("content-type");
                 }
-                _httpRequest.Headers.TryAddWithoutValidation("accept", accept);
+                _httpRequest.Headers.TryAddWithoutValidation("content-type", contentType);
             }
             if (AcceptLanguage != null)
             {

@@ -43,7 +43,7 @@ namespace Microsoft.Azure.ContainerRegistry.Models
         /// <param name="fsLayers">List of layer information</param>
         /// <param name="history">Image history</param>
         /// <param name="signatures">Image signature</param>
-        public Manifest(int? schemaVersion = default(int?), int? mediaType = default(int?), V2Descriptor config = default(V2Descriptor), IList<V2Descriptor> layers = default(IList<V2Descriptor>), string architecture = default(string), string name = default(string), string tag = default(string), IList<FsLayer> fsLayers = default(IList<FsLayer>), IList<History> history = default(IList<History>), IList<ImageSignature> signatures = default(IList<ImageSignature>))
+        public Manifest(int? schemaVersion = default(int?), string mediaType = default(string), V2Descriptor config = default(V2Descriptor), IList<V2Descriptor> layers = default(IList<V2Descriptor>), string architecture = default(string), string name = default(string), string tag = default(string), IList<FsLayer> fsLayers = default(IList<FsLayer>), IList<History> history = default(IList<History>), IList<ImageSignature> signatures = default(IList<ImageSignature>))
         {
             SchemaVersion = schemaVersion;
             MediaType = mediaType;
@@ -75,7 +75,7 @@ namespace Microsoft.Azure.ContainerRegistry.Models
         /// the accept header
         /// </summary>
         [JsonProperty(PropertyName = "mediaType")]
-        public int? MediaType { get; set; }
+        public string MediaType { get; set; }
 
         /// <summary>
         /// Gets or sets V2 image config descriptor

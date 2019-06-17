@@ -70,7 +70,8 @@ namespace Microsoft.Azure.ContainerRegistry
             /// A tag or a digest, pointing to a specific image
             /// </param>
             /// <param name='accept'>
-            /// Accept header string delimited by comma
+            /// Accept header string delimited by comma. For example,
+            /// application/vnd.docker.distribution.manifest.v2+json
             /// </param>
             /// <param name='cancellationToken'>
             /// The cancellation token.
@@ -96,15 +97,16 @@ namespace Microsoft.Azure.ContainerRegistry
             /// <param name='reference'>
             /// A tag or a digest, pointing to a specific image
             /// </param>
-            /// <param name='accept'>
-            /// Accept header string delimited by comma
+            /// <param name='contentType'>
+            /// Content type of the request body. For example,
+            /// application/vnd.docker.distribution.manifest.v2+json
             /// </param>
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task PutManifestAsync(this IAzureContainerRegistryClient operations, string name, string reference, string accept = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task PutManifestAsync(this IAzureContainerRegistryClient operations, string name, string reference, string contentType = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                (await operations.PutManifestWithHttpMessagesAsync(name, reference, accept, null, cancellationToken).ConfigureAwait(false)).Dispose();
+                (await operations.PutManifestWithHttpMessagesAsync(name, reference, contentType, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
 
             /// <summary>
