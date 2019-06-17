@@ -161,7 +161,7 @@
           {
             "name": "accept",
             "in": "header",
-            "description": "Accept header string delimited by comma",
+            "description": "Accept header string delimited by comma. For example, application/vnd.docker.distribution.manifest.v2+json",
             "required": false,
             "type": "string"
           }
@@ -211,9 +211,9 @@
             "type": "string"
           },
           {
-            "name": "accept",
+            "name": "content-type",
             "in": "header",
-            "description": "Accept header string delimited by comma",
+            "description": "Content type of the request body. For example, application/vnd.docker.distribution.manifest.v2+json",
             "required": false,
             "type": "string"
           }
