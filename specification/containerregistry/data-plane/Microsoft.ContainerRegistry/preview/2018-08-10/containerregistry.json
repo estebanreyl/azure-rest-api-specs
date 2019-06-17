@@ -1263,7 +1263,7 @@
           "description": "Schema version"
         },
         "mediaType": {
-          "type": "integer",
+          "type": "string",
           "description": "Media type usually application/vnd.docker.distribution.manifest.v2+json if this is in the accept header"
         },
         "config": {
