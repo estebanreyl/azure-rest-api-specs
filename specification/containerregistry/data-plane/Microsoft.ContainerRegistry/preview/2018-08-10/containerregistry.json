@@ -62,6 +62,9 @@
   "schemes": [
     "https"
   ],
+  "consumes": [
+    "application/json"
+  ],
   "produces": [
     "application/json"
   ],
@@ -194,6 +197,9 @@
             "$ref": "./examples/PutManifest.json"
           }
         },
+        "consumes": [
+          "application/json"
+        ],
         "operationId": "PutManifest",
         "parameters": [
           {
@@ -214,8 +220,16 @@
             "name": "content-type",
             "in": "header",
             "description": "Content type of the request body. For example, application/vnd.docker.distribution.manifest.v2+json",
-            "required": false,
+            "required": true,
             "type": "string"
+          },
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Manifest"
+            }
           }
         ],
         "responses": {
