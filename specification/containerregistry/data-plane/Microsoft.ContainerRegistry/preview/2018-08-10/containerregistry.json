@@ -62,9 +62,6 @@
   "schemes": [
     "https"
   ],
-  "consumes": [
-    "application/json"
-  ],
   "produces": [
     "application/json"
   ],
@@ -198,7 +195,7 @@
           }
         },
         "consumes": [
-          "application/json"
+          "application/vnd.docker.distribution.manifest.v2+json"
         ],
         "operationId": "PutManifest",
         "parameters": [
@@ -213,13 +210,6 @@
             "name": "reference",
             "in": "path",
             "description": "A tag or a digest, pointing to a specific image",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "content-type",
-            "in": "header",
-            "description": "Content type of the request body. For example, application/vnd.docker.distribution.manifest.v2+json",
             "required": true,
             "type": "string"
           },
