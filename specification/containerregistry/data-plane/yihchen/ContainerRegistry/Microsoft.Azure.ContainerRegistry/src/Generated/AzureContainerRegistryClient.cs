@@ -715,10 +715,6 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <param name='reference'>
         /// A tag or a digest, pointing to a specific image
         /// </param>
-        /// <param name='contentType'>
-        /// Content type of the request body. For example,
-        /// application/vnd.docker.distribution.manifest.v2+json
-        /// </param>
         /// <param name='payload'>
         /// </param>
         /// <param name='customHeaders'>
@@ -739,7 +735,7 @@ namespace Microsoft.Azure.ContainerRegistry
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string contentType, Manifest payload, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, Manifest payload, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (LoginUri == null)
             {
@@ -752,10 +748,6 @@ namespace Microsoft.Azure.ContainerRegistry
             if (reference == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "reference");
-            }
-            if (contentType == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "contentType");
             }
             if (payload == null)
             {
@@ -770,7 +762,6 @@ namespace Microsoft.Azure.ContainerRegistry
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
                 tracingParameters.Add("name", name);
                 tracingParameters.Add("reference", reference);
-                tracingParameters.Add("contentType", contentType);
                 tracingParameters.Add("payload", payload);
                 tracingParameters.Add("cancellationToken", cancellationToken);
                 ServiceClientTracing.Enter(_invocationId, this, "PutManifest", tracingParameters);
@@ -795,14 +786,6 @@ namespace Microsoft.Azure.ContainerRegistry
             if (GenerateClientRequestId != null && GenerateClientRequestId.Value)
             {
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
-            if (contentType != null)
-            {
-                if (_httpRequest.Headers.Contains("content-type"))
-                {
-                    _httpRequest.Headers.Remove("content-type");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("content-type", contentType);
             }
             if (AcceptLanguage != null)
             {
@@ -832,7 +815,7 @@ namespace Microsoft.Azure.ContainerRegistry
             {
                 _requestContent = SafeJsonConvert.SerializeObject(payload, SerializationSettings);
                 _httpRequest.Content = new StringContent(_requestContent, System.Text.Encoding.UTF8);
-                _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json; charset=utf-8");
+                _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/vnd.docker.distribution.manifest.v2+json");
             }
             // Set Credentials
             if (Credentials != null)
