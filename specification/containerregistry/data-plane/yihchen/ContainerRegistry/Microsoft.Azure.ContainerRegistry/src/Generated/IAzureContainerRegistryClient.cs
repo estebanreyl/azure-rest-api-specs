@@ -128,13 +128,15 @@ namespace Microsoft.Azure.ContainerRegistry
         /// Content type of the request body. For example,
         /// application/vnd.docker.distribution.manifest.v2+json
         /// </param>
+        /// <param name='payload'>
+        /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
         /// </param>
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string contentType = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationResponse> PutManifestWithHttpMessagesAsync(string name, string reference, string contentType, Manifest payload, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// List repositories

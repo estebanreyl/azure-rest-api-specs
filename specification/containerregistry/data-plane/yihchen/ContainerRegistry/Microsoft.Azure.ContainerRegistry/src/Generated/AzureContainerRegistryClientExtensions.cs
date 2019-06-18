@@ -101,12 +101,14 @@ namespace Microsoft.Azure.ContainerRegistry
             /// Content type of the request body. For example,
             /// application/vnd.docker.distribution.manifest.v2+json
             /// </param>
+            /// <param name='payload'>
+            /// </param>
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task PutManifestAsync(this IAzureContainerRegistryClient operations, string name, string reference, string contentType = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task PutManifestAsync(this IAzureContainerRegistryClient operations, string name, string reference, string contentType, Manifest payload, CancellationToken cancellationToken = default(CancellationToken))
             {
-                (await operations.PutManifestWithHttpMessagesAsync(name, reference, contentType, null, cancellationToken).ConfigureAwait(false)).Dispose();
+                (await operations.PutManifestWithHttpMessagesAsync(name, reference, contentType, payload, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
 
             /// <summary>
