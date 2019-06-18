@@ -119,9 +119,6 @@
               "$ref": "#/definitions/RepositoryTags"
             }
           },
-          "404": {
-            "description": "Image doesn't exist"
-          },
           "default": {
             "description": "ACR error response describing why the operation failed.",
             "schema": {
@@ -172,9 +169,6 @@
             "schema": {
               "$ref": "#/definitions/Manifest"
             }
-          },
-          "404": {
-            "description": "Image doesn't exist"
           },
           "default": {
             "description": "ACR error response describing why the operation failed.",
@@ -352,9 +346,6 @@
               "$ref": "#/definitions/RepositoryAttributes"
             }
           },
-          "404": {
-            "description": "Image doesn't exist"
-          },
           "default": {
             "description": "ACR error response describing why the operation failed.",
             "schema": {
@@ -389,9 +380,6 @@
             "schema": {
               "$ref": "#/definitions/DeletedRepository"
             }
-          },
-          "404": {
-            "description": "Image doesn't exist"
           },
           "default": {
             "description": "ACR error response describing why the operation failed.",
@@ -437,9 +425,6 @@
         "responses": {
           "204": {
             "description": "The attributes is updated"
-          },
-          "404": {
-            "description": "Image doesn't exist"
           },
           "default": {
             "description": "ACR error response describing why the operation failed.",
@@ -507,9 +492,6 @@
               "$ref": "#/definitions/AcrRepositoryTags"
             }
           },
-          "404": {
-            "description": "Image doesn't exist"
-          },
           "default": {
             "description": "ACR error response describing why the operation failed.",
             "schema": {
@@ -554,9 +536,6 @@
             "schema": {
               "$ref": "#/definitions/AcrTagAttributes"
             }
-          },
-          "404": {
-            "description": "Tag doesn't exist"
           },
           "default": {
             "description": "ACR error response describing why the operation failed.",
@@ -610,9 +589,6 @@
           "204": {
             "description": "The attributes are updated"
           },
-          "404": {
-            "description": "Manifest doesn't exist"
-          },
           "default": {
             "description": "ACR error response describing why the operation failed.",
             "schema": {
@@ -655,9 +631,6 @@
         "responses": {
           "204": {
             "description": "The tag is deleted"
-          },
-          "404": {
-            "description": "Tag doesn't exist"
           },
           "default": {
             "description": "ACR error response describing why the operation failed.",
@@ -718,9 +691,6 @@
               "$ref": "#/definitions/AcrManifests"
             }
           },
-          "404": {
-            "description": "Image doesn't exist"
-          },
           "default": {
             "description": "ACR error response describing why the operation failed.",
             "schema": {
@@ -765,9 +735,6 @@
             "schema": {
               "$ref": "#/definitions/AcrManifestAttributes"
             }
-          },
-          "404": {
-            "description": "Manifest doesn't exist"
           },
           "default": {
             "description": "ACR error response describing why the operation failed.",
@@ -820,9 +787,6 @@
         "responses": {
           "204": {
             "description": "The attributes are updated"
-          },
-          "404": {
-            "description": "Manifest doesn't exist"
           },
           "default": {
             "description": "ACR error response describing why the operation failed.",
