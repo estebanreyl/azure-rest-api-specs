@@ -20,5 +20,10 @@
             "url":"https://raw.githubusercontent.com/Azure/autorest/master/schema/composite-swagger.json"
         }
     ],
-    "typescript.tsdk": "node_modules\\typescript\\lib"
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#1A3224",
+        "titleBar.activeBackground": "#244733",
+        "titleBar.activeForeground": "#F7FBF9"
+    }
 }
