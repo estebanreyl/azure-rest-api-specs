@@ -4,6 +4,7 @@ import "@azure-tools/typespec-azure-core";
 
 using TypeSpec.Http;
 using Azure.Core;
+using TypeSpec.Versioning;
 
 namespace ContainerRegistry;
 
@@ -1232,4 +1233,99 @@ model PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
    */
   @encodedName("application/x-www-form-urlencoded", "grant_type")
   grantType: TokenGrantType;
+}
+
+/**
+ * Options for enabling or disabling automatic artifact streaming conversion on a repository.
+ */
+@added(Versions.v2023_08_01)
+model ArtifactStreamingRepositoryOptions {
+  /** Whether to automatically convert pushed images for artifact streaming. */
+  convertPushedImages: boolean;
+
+  /** The conversion format (e.g. "overlaybd"). */
+  conversionFormat?: string;
+
+  /** The conversion version (e.g. "v1"). */
+  conversionVersion?: string;
+}
+
+/**
+ * Options for converting a specific manifest for artifact streaming.
+ */
+@added(Versions.v2023_08_01)
+model ArtifactStreamingManifestOptions {
+  /** The conversion format (e.g. "overlaybd"). */
+  conversionFormat: string;
+
+  /** The conversion version (e.g. "v1"). */
+  conversionVersion: string;
+}
+
+/**
+ * The status of an artifact streaming operation.
+ */
+@added(Versions.v2023_08_01)
+model ArtifactStreamingOperationStatus {
+  /** The name of the operation (e.g. "ArtifactStreaming"). */
+  @visibility(Lifecycle.Read)
+  name?: string;
+
+  /** The resource that is the target of the operation. */
+  @visibility(Lifecycle.Read)
+  resource?: string;
+
+  /** The current status of the operation. */
+  @visibility(Lifecycle.Read)
+  status: string;
+
+  /** The time the operation started. */
+  @visibility(Lifecycle.Read)
+  startTime?: string;
+
+  /** The time the operation completed. */
+  @visibility(Lifecycle.Read)
+  endTime?: string;
+
+  /** The progress of the operation. */
+  @visibility(Lifecycle.Read)
+  progress?: string;
+
+  /** Additional details about the operation. */
+  @visibility(Lifecycle.Read)
+  details?: string;
+}
+
+/**
+ * A descriptor for a manifest in the referrers list, following the OCI image descriptor spec.
+ */
+model ReferrerDescriptor {
+  /** The media type of the referenced manifest. */
+  mediaType?: string;
+
+  /** The digest of the referenced manifest. */
+  digest?: string;
+
+  /** The size in bytes of the referenced manifest. */
+  size?: int64;
+
+  /** The artifact type of the referenced manifest. */
+  artifactType?: string;
+
+  /** Annotations associated with the referenced manifest. */
+  annotations?: Record<string>;
+}
+
+/**
+ * The result of listing referrers for a manifest, following the OCI Index format.
+ */
+model ReferrersResult {
+  /** The schema version. Always 2 for OCI Index. */
+  schemaVersion: int32;
+
+  /** The media type of this response. */
+  mediaType?: string;
+
+  /** The list of referrer descriptors. */
+  manifests?: ReferrerDescriptor[];
 }

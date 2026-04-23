@@ -1,0 +1,27 @@
+{
+  "parameters": {
+    "name": "myrepo",
+    "api-version": "2021-07-01",
+    "url": "acrapi.azurecr.io",
+    "body": {
+      "convertPushedImages": true,
+      "conversionFormat": "overlaybd",
+      "conversionVersion": "v1"
+    }
+  },
+  "responses": {
+    "202": {},
+    "401": {
+      "body": {
+        "errors": [
+          {
+            "code": "DISALLOWED",
+            "message": "Artifact streaming is not supported on this registry SKU"
+          }
+        ]
+      }
+    }
+  },
+  "operationId": "ContainerRegistry_EnableRepositoryStreaming",
+  "title": "Enable repository streaming"
+}

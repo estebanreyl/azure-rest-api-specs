@@ -1,0 +1,31 @@
+{
+  "parameters": {
+    "name": "myrepo",
+    "operationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "api-version": "2021-07-01",
+    "url": "acrapi.azurecr.io"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "name": "ArtifactStreaming",
+        "resource": "myrepo",
+        "status": "Succeeded",
+        "startTime": "2025-01-15T10:30:00Z",
+        "endTime": "2025-01-15T10:35:00Z"
+      }
+    },
+    "404": {
+      "body": {
+        "errors": [
+          {
+            "code": "OPERATION_UNKNOWN",
+            "message": "The specified operation does not exist"
+          }
+        ]
+      }
+    }
+  },
+  "operationId": "ContainerRegistry_GetOperationStatus",
+  "title": "Get operation status"
+}

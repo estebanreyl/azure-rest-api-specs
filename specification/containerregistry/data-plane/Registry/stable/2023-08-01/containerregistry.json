@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Azure Container Registry",
-    "version": "2021-07-01",
+    "version": "2023-08-01",
     "description": "Metadata API definition for the Azure Container Registry runtime",
     "x-typespec-generated": [
       {
@@ -368,6 +368,173 @@
         "x-ms-examples": {
           "Delete a repository": {
             "$ref": "./examples/DeleteAcrRepository.json"
+          }
+        }
+      }
+    },
+    "/acr/v1/{name}/_operations/{operationId}": {
+      "get": {
+        "operationId": "ContainerRegistry_GetOperationStatus",
+        "description": "Get the status of a long-running operation.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Azure.Core.Foundations.ApiVersionParameter"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Name of the image (including the namespace)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "operationId",
+            "in": "path",
+            "description": "The unique identifier of the operation",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "schema": {
+              "$ref": "#/definitions/ArtifactStreamingOperationStatus"
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get operation status": {
+            "$ref": "./examples/GetOperationStatus.json"
+          }
+        }
+      }
+    },
+    "/acr/v1/{name}/_streaming": {
+      "post": {
+        "operationId": "ContainerRegistry_EnableRepositoryStreaming",
+        "description": "Enable or disable automatic artifact streaming conversion for a repository.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Azure.Core.Foundations.ApiVersionParameter"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Name of the image (including the namespace)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Artifact streaming repository options",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArtifactStreamingRepositoryOptions"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The request has been accepted for processing, but processing has not yet completed."
+          },
+          "401": {
+            "description": "The operation is not allowed (e.g. registry SKU does not support streaming).",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Enable repository streaming": {
+            "$ref": "./examples/EnableRepositoryStreaming.json"
+          }
+        }
+      }
+    },
+    "/acr/v1/{name}/_streaming/{digest}": {
+      "post": {
+        "operationId": "ContainerRegistry_ConvertManifest",
+        "description": "Convert a specific manifest for artifact streaming. This is a long-running operation. The response includes a Location header for polling the operation status.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Azure.Core.Foundations.ApiVersionParameter"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "Name of the image (including the namespace)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "digest",
+            "in": "path",
+            "description": "Digest of the manifest to convert",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Artifact streaming manifest conversion options",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArtifactStreamingManifestOptions"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The conversion operation has been accepted.",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "URL to poll for the operation status"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (e.g. missing body).",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          },
+          "401": {
+            "description": "The operation is not allowed (e.g. registry SKU does not support streaming).",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/AcrErrors"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Convert manifest for streaming": {
+            "$ref": "./examples/ConvertManifest.json"
           }
         }
       }
@@ -3020,6 +3187,89 @@
         {
           "$ref": "#/definitions/Manifest"
         }
+      ]
+    },
+    "ArtifactStreamingRepositoryOptions": {
+      "type": "object",
+      "description": "Options for enabling or disabling automatic artifact streaming conversion on a repository.",
+      "properties": {
+        "convertPushedImages": {
+          "type": "boolean",
+          "description": "Whether to automatically convert pushed images for artifact streaming."
+        },
+        "conversionFormat": {
+          "type": "string",
+          "description": "The conversion format (e.g. \"overlaybd\")."
+        },
+        "conversionVersion": {
+          "type": "string",
+          "description": "The conversion version (e.g. \"v1\")."
+        }
+      },
+      "required": [
+        "convertPushedImages"
+      ]
+    },
+    "ArtifactStreamingManifestOptions": {
+      "type": "object",
+      "description": "Options for converting a specific manifest for artifact streaming.",
+      "properties": {
+        "conversionFormat": {
+          "type": "string",
+          "description": "The conversion format (e.g. \"overlaybd\")."
+        },
+        "conversionVersion": {
+          "type": "string",
+          "description": "The conversion version (e.g. \"v1\")."
+        }
+      },
+      "required": [
+        "conversionFormat",
+        "conversionVersion"
+      ]
+    },
+    "ArtifactStreamingOperationStatus": {
+      "type": "object",
+      "description": "The status of an artifact streaming operation.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the operation (e.g. \"ArtifactStreaming\").",
+          "readOnly": true
+        },
+        "resource": {
+          "type": "string",
+          "description": "The resource that is the target of the operation.",
+          "readOnly": true
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the operation.",
+          "readOnly": true
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The time the operation started.",
+          "readOnly": true
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The time the operation completed.",
+          "readOnly": true
+        },
+        "progress": {
+          "type": "string",
+          "description": "The progress of the operation.",
+          "readOnly": true
+        },
+        "details": {
+          "type": "string",
+          "description": "Additional details about the operation.",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "status"
       ]
     },
     "ReferrerDescriptor": {

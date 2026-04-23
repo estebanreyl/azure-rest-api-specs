@@ -26,7 +26,7 @@ These are the global settings for the ContainerRegistry API.
 ``` yaml
 # common
 openapi-type: data-plane
-tag: package-2021-07
+tag: package-2023-08
 
 suppressions:
   - code: LroExtension
@@ -41,6 +41,15 @@ suppressions:
     where:
       - $.definitions["Annotations"].additionalProperties
     reason: TypeSpec-generated data-plane spec. SDK is generated directly from TypeSpec, not swagger.
+```
+
+### Tag: package-2023-08
+
+These settings apply only when `--tag=package-2023-08` is specified on the command line.
+
+``` yaml $(tag) == 'package-2023-08'
+input-file: 
+- stable/2023-08-01/containerregistry.json
 ```
 
 ### Tag: package-2021-07

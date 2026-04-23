@@ -5,6 +5,7 @@ import "./models.tsp";
 using TypeSpec.Http;
 using Azure.Core;
 using Azure.Core.Foundations;
+using TypeSpec.Versioning;
 
 namespace ContainerRegistry;
 
@@ -440,6 +441,110 @@ interface ContainerRegistry {
     },
     ArtifactManifestProperties
   >;
+
+  /**
+   * Enable or disable automatic artifact streaming conversion for a repository.
+   */
+  #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "Artifact streaming API"
+  @added(Versions.v2023_08_01)
+  @route("/acr/v1/{name}/_streaming")
+  @post
+  enableRepositoryStreaming is AcrOperation<
+    {
+      /**
+       * Name of the image (including the namespace)
+       */
+      @path
+      name: string;
+
+      /**
+       * Artifact streaming repository options
+       */
+      @bodyRoot
+      body: ArtifactStreamingRepositoryOptions;
+    },
+    {
+      /** The request has been accepted */
+      @statusCode statusCode: 202;
+    } | {
+      /** The operation is not allowed (e.g. registry SKU does not support streaming) */
+      @statusCode statusCode: 401;
+      @bodyRoot body: AcrErrors;
+    }
+  >;
+
+  /**
+   * Convert a specific manifest for artifact streaming. This is a long-running
+   * operation. The response includes a Location header for polling the operation status.
+   */
+  #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "Artifact streaming conversion API"
+  @added(Versions.v2023_08_01)
+  @route("/acr/v1/{name}/_streaming/{digest}")
+  @post
+  convertManifest is AcrOperation<
+    {
+      /**
+       * Name of the image (including the namespace)
+       */
+      @path
+      name: string;
+
+      /**
+       * Digest of the manifest to convert
+       */
+      @path
+      digest: string;
+
+      /**
+       * Artifact streaming manifest conversion options
+       */
+      @bodyRoot
+      body: ArtifactStreamingManifestOptions;
+    },
+    {
+      /** The conversion operation has been accepted */
+      @statusCode statusCode: 202;
+
+      /** URL to poll for the operation status */
+      @header("Location") location: string;
+    } | {
+      /** Bad request (e.g. missing body) */
+      @statusCode statusCode: 400;
+      @bodyRoot body: AcrErrors;
+    } | {
+      /** The operation is not allowed (e.g. registry SKU does not support streaming) */
+      @statusCode statusCode: 401;
+      @bodyRoot body: AcrErrors;
+    }
+  >;
+
+  /**
+   * Get the status of a long-running operation.
+   */
+  #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "Operation status API"
+  @added(Versions.v2023_08_01)
+  @route("/acr/v1/{name}/_operations/{operationId}")
+  @get
+  getOperationStatus is AcrOperation<
+    {
+      /**
+       * Name of the image (including the namespace)
+       */
+      @path
+      name: string;
+
+      /**
+       * The unique identifier of the operation
+       */
+      @path
+      operationId: string;
+    },
+    ArtifactStreamingOperationStatus | {
+      /** The operation was not found */
+      @statusCode statusCode: 404;
+      @bodyRoot body: AcrErrors;
+    }
+  >;
 }
 
 interface ContainerRegistryBlob {
@@ -838,6 +943,30 @@ interface ContainerRegistryBlob {
       /** Content range of the blob chunk. */
       @header("Content-Range") contentRange: string;
     }
+  >;
+
+  /**
+   * Get the list of referrers for a given manifest digest, following the OCI
+   * Distribution Referrers API specification.
+   */
+  #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "OCI Distribution Referrers API"
+  @route("/v2/{name}/referrers/{digest}")
+  @get
+  getReferrers is AcrOperation<
+    {
+      /**
+       * Name of the image (including the namespace)
+       */
+      @path
+      name: string;
+
+      /**
+       * Digest of the manifest to list referrers for
+       */
+      @path
+      digest: string;
+    },
+    ReferrersResult
   >;
 }
 

@@ -1,0 +1,41 @@
+{
+  "parameters": {
+    "name": "myrepo",
+    "digest": "sha256:abc123def456",
+    "api-version": "2021-07-01",
+    "url": "acrapi.azurecr.io",
+    "body": {
+      "conversionFormat": "overlaybd",
+      "conversionVersion": "v1"
+    }
+  },
+  "responses": {
+    "202": {
+      "headers": {
+        "Location": "https://acrapi.azurecr.io/acr/v1/myrepo/_operations/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      }
+    },
+    "400": {
+      "body": {
+        "errors": [
+          {
+            "code": "BAD_REQUEST",
+            "message": "Request body is required"
+          }
+        ]
+      }
+    },
+    "401": {
+      "body": {
+        "errors": [
+          {
+            "code": "DISALLOWED",
+            "message": "Artifact streaming is not supported on this registry SKU"
+          }
+        ]
+      }
+    }
+  },
+  "operationId": "ContainerRegistry_ConvertManifest",
+  "title": "Convert manifest for streaming"
+}
